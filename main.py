@@ -2,6 +2,7 @@ from datetime import datetime, date
 from sklearn import tree
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
+from sklearn import linear_model
 #--------------data read--------------------#
 data = open("car.txt", "r")
 cardata = data.read()
@@ -71,6 +72,8 @@ def accuracy_func(tag, result):
 # program object:
 # guess the class with attributes
 
+
+print("=======================Car Data=====================")
 
 #==================preprocessing====================
 
@@ -198,7 +201,12 @@ mlp_acc = accuracy_func(Ycar_data, result)
 print("Accuracy of MLP: " + str(mlp_acc))
 
 #================Logistic Regression=============
+reg = linear_model.LogisticRegression()
+reg.fit(Xcar_data, Ycar_data)
+result = reg.predict(Xcar_data)
 
+LR_acc = accuracy_func(Ycar_data, result)
+print("Accuracy of Logistic Regression: " + str(LR_acc))
 
 
 
@@ -225,6 +233,8 @@ print("Accuracy of MLP: " + str(mlp_acc))
 
 #program object
 #guess the Absolute Humidity with other attributes
+
+print("=======================Air Quality Data=====================")
 
 #====================preprocessing======================
 
