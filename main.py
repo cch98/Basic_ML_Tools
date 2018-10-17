@@ -247,6 +247,8 @@ Yair_data = []
 #     cMax.append(-1e10)
 #     cMin.append(1e10)
 
+normal_cnt = 0
+
 for i in air_data:
     t = []
 
@@ -272,16 +274,25 @@ for i in air_data:
 
     Xair_data.append(t)
 
+    ch = 1
+    for j in Xair_data[len(Xair_data)-1]:
+        if(j <= -200):
+            ch = 0
+
+    normal_cnt+=ch
+
     k = float(i[14])
     if (k <= -200):
-        k = -1
+        k = 0
     else:
         k *= 2
-        k = int(k)
+        k = int(k) + 1
     Yair_data.append(k)
 
+
+# print("normal cnt: " + str(normal_cnt))
 # print(Xair_data)
-print(Yair_data)
+# print(Yair_data)
 
 # print(cMax)
 # print(cMin)
@@ -289,4 +300,56 @@ print(Yair_data)
 # [1078909200.0, -200.0, -200.0, -200.0, -200.0, -200.0, -200.0, -200.0, -200.0, -200.0, -200.0, -200.0, -200.0, -200.0]
 # [1112590800.0, 11.9, 2040.0, 1189.0, 63.7, 2214.0, 1479.0, 2683.0, 340.0, 2775.0, 2523.0, 44.6, 88.7, 2.231]
 # [1078909200.0, 0.1, 647.0, 7.0, 0.1, 383.0, 2.0, 322.0, 2.0, 551.0, 221.0, -1.9, 9.2, 0.1847]
+
+#=====================ZeroR====================
+check = [0,0,0,0,0,0]
+
+for i in Yair_data:
+    check[i] += 1
+
+idx = 0
+sum = 0
+for i in range(len(check)):
+    sum += check[i]
+    if(check[i]>check[idx]):
+        idx = i
+
+acc = check[idx]/sum
+print("Accuracy of ZeroR: "+ str(acc))
+
+
+#=====================OneR====================
+
+
+#=====================Decesion Tree====================
+clf = tree.DecisionTreeClassifier()
+clf = clf.fit(Xair_data, Yair_data)
+result = clf.predict(Xair_data)
+
+dt_acc = accuracy_func(Yair_data, result)
+print("Accuracy of Decision Tree: " + str(dt_acc))
+
+#=====================Naive Bayesian====================
+gnb = GaussianNB()
+gnb.fit(Xair_data, Yair_data)
+result = gnb.predict(Xair_data)
+
+nb_acc = accuracy_func(Yair_data, result)
+print("Accuracy of Naive Bayesian: " + str(nb_acc))
+
+#=====================MLP====================
+clf = MLPClassifier(solver= 'lbfgs', alpha= 1e-5, hidden_layer_sizes=(10, 10, 5), random_state= 1)
+clf.fit(Xair_data, Yair_data)
+result = clf.predict(Xair_data)
+
+mlp_acc = accuracy_func(Yair_data, result)
+print("Accuracy of MLP: " + str(mlp_acc))
+
+#=====================Logistic Regression====================
+reg = linear_model.LogisticRegression()
+reg.fit(Xair_data, Yair_data)
+result = reg.predict(Xair_data)
+
+LR_acc = accuracy_func(Yair_data, result)
+print("Accuracy of Logistic Regression: " + str(LR_acc))
 
